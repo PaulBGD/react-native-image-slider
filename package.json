@@ -1,0 +1,8 @@
+{
+  "name": "react-native-image-slider",
+  "version": "0.0.1",
+  "main": "ImageSlider.js",
+  "peerDependencies": {
+    "react-native": "^0.20.0"
+  }
+}
