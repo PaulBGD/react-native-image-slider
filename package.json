@@ -1,7 +1,13 @@
 {
   "name": "react-native-image-slider",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "ImageSlider.js",
+  "author": {
+      "name": "Paul Sauve",
+      "email": "paul@burngames.net",
+      "url": "https://paulb.gd"
+  },
+  "license": "MIT",
   "peerDependencies": {
     "react-native": "^0.20.0"
   }

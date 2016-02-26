@@ -96,10 +96,11 @@ export default class ImageSlider extends Component {
     }
 
     render() {
-        let width = Dimensions.get('window').width
+        let width = Dimensions.get('window').width;
+        let height = this.props.height || this.state.height;
         return (<View>
             <Animated.View
-                style={[styles.container, {height: this.state.height, width: width * this.props.images.length, transform: [{translateX: this.state.left}]}]}
+                style={[styles.container, {height: height, width: width * this.props.images.length, transform: [{translateX: this.state.left}]}]}
                 {...this._panResponder.panHandlers}>
                     {this.props.images.map((image, index) => {
                         return (<Image key={index} source={{uri: image}} style={[styles.image, {height: this.state.height}]}/>)
