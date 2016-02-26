@@ -1,6 +1,6 @@
 {
   "name": "react-native-image-slider",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "ImageSlider.js",
   "author": {
       "name": "Paul Sauve",

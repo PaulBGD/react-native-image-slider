@@ -6,10 +6,9 @@ import React, {
     StyleSheet,
     Animated,
     PanResponder,
-    TouchableHighlight
+    TouchableHighlight,
+    Dimensions
 } from 'react-native';
-
-const Dimensions = require('Dimensions');
 
 const styles = StyleSheet.create({
     container: {
