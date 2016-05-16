@@ -102,7 +102,7 @@ export default class ImageSlider extends Component {
                 style={[styles.container, {height: height, width: width * this.props.images.length, transform: [{translateX: this.state.left}]}]}
                 {...this._panResponder.panHandlers}>
                     {this.props.images.map((image, index) => {
-                        return (<Image key={index} source={{uri: image}} style={[styles.image, {height: this.state.height}]}/>)
+                        return (<Image key={index} source={{uri: image}} style={[styles.image, {height: height}]}/>)
                     })}
             </Animated.View>
             <View style={styles.buttons}>
