@@ -7,6 +7,7 @@ import {
     Animated,
     PanResponder,
     TouchableHighlight,
+    TouchableOpacity,
     Dimensions
 } from 'react-native';
 
@@ -113,12 +114,11 @@ export default class ImageSlider extends Component {
             return true;
         };
 
+        const isSwipe = gestureState => gestureState.dx>0 && gestureState.dy>0;
         this._panResponder = PanResponder.create({
-            onStartShouldSetPanResponder: (evt, gestureState) => {
-                return true;
-            },
-            onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-            onMoveShouldSetPanResponder: (evt, gestureState) => true,
+            onStartShouldSetPanResponder: (evt, gestureState) => isSwipe(gestureState),
+            onStartShouldSetPanResponderCapture: (evt, gestureState) => isSwipe(gestureState),
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
             onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
             onPanResponderRelease: release,
             onPanResponderTerminate: release,
@@ -149,18 +149,32 @@ export default class ImageSlider extends Component {
     }
 
     render() {
+        const backgroundColor = this.props.backgroundColor ? { backgroundColor: this.props.backgroundColor } : {};
         const width = Dimensions.get('window').width;
         const height = this.props.height || this.state.height;
         const position = this._getPosition();
         return (<View>
             <Animated.View
-                style={[styles.container, {height: height, width: width * this.props.images.length, transform: [{translateX: this.state.left}]}]}
+                style={[styles.container, backgroundColor, {height: height, width: width * this.props.images.length, transform: [{translateX: this.state.left}]}]}
                 {...this._panResponder.panHandlers}>
                     {this.props.images.map((image, index) => {
-                        return (<Image
+                      const imageComponent = <Image
+                                                source={{uri: image}}
+                                                style={{height: position === index || this.state.scrolling ? height : 0, width}}
+                                              />;
+                      if (this.props.onPress) {
+                        return (
+                          <TouchableOpacity
                             key={index}
-                            source={{uri: image}}
-                            style={{height: position === index || this.state.scrolling ? height : 0, width}}/>)
+                            onPress={() => this.props.onPress({ image, index })}
+                            delayPressIn={200}
+                          >
+                            {imageComponent}
+                          </TouchableOpacity>
+                        );
+                      } else {
+                        return imageComponent;
+                      }
                     })}
             </Animated.View>
             <View style={styles.buttons}>
