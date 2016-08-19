@@ -149,13 +149,13 @@ export default class ImageSlider extends Component {
     }
 
     render() {
-        const backgroundColor = this.props.backgroundColor ? { backgroundColor: this.props.backgroundColor } : {};
+        const customStyles = this.props.style ? this.props.style : {};
         const width = Dimensions.get('window').width;
         const height = this.props.height || this.state.height;
         const position = this._getPosition();
         return (<View>
             <Animated.View
-                style={[styles.container, backgroundColor, {height: height, width: width * this.props.images.length, transform: [{translateX: this.state.left}]}]}
+                style={[styles.container, customStyles, {height: height, width: width * this.props.images.length, transform: [{translateX: this.state.left}]}]}
                 {...this._panResponder.panHandlers}>
                     {this.props.images.map((image, index) => {
                       const imageComponent = <Image
