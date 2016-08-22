@@ -114,9 +114,8 @@ export default class ImageSlider extends Component {
             return true;
         };
 
-        const isSwipe = gestureState => Math.abs(gestureState.dx) > 5;
         this._panResponder = PanResponder.create({
-            onMoveShouldSetPanResponderCapture: (evt, gestureState) => isSwipe(gestureState),
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => Math.abs(gestureState.dx) > 5,
             onPanResponderRelease: release,
             onPanResponderTerminate: release,
             onPanResponderMove: (e, gestureState) => {
