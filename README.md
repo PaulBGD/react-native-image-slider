@@ -1,5 +1,5 @@
 # react-native-image-slider
-An quick and easy image slider for react native.
+A quick and easy image slider for react native.
 
 ![GIF](final.gif)
 

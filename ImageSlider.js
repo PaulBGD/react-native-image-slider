@@ -155,6 +155,7 @@ export default class ImageSlider extends Component {
                 {...this._panResponder.panHandlers}>
                     {this.props.images.map((image, index) => {
                       const imageComponent = <Image
+                                                key={index}
                                                 source={{uri: image}}
                                                 style={{height: position === index || this.state.scrolling ? height : 0, width}}
                                               />;
