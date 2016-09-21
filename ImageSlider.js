@@ -3,6 +3,7 @@ import {
     Image,
     Text,
     View,
+    ScrollView,
     StyleSheet,
     Animated,
     PanResponder,
@@ -15,9 +16,6 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         backgroundColor: '#222'
-    },
-    image: {
-        width: Dimensions.get('window').width
     },
     buttons: {
         height: 15,
@@ -48,28 +46,29 @@ export default class ImageSlider extends Component {
         this.state = {
             position: 0,
             height: Dimensions.get('window').width * (4 / 9),
-            left: new Animated.Value(0),
+            width: Dimensions.get('window').width,
             scrolling: false,
             timeout: null
         };
     }
 
-    _move(index) {
-        const width = Dimensions.get('window').width;
-        const to = index * -width;
-        if (!this.state.scrolling) {
-            return;
+    _onRef(ref) {
+        this._ref = ref;
+        if (ref && this.state.position !== this._getPosition()) {
+            this._move(this._getPosition());
         }
-        Animated.spring(this.state.left, {toValue: to, friction: 10, tension: 50}).start();
+    }
+
+    _move(index) {
+        const isUpdating = index !== this._getPosition();
         if (this.state.timeout) {
             clearTimeout(this.state.timeout);
         }
-        this.setState({position: index, timeout: setTimeout(() => {
-            this.setState({scrolling: false, timeout: null});
-            if (this.props.onPositionChanged) {
-                this.props.onPositionChanged(index);
-            }
-        }, 500)});
+        this._ref.scrollTo({x: this.state.width * index, y: 0, animated: true});
+        this.setState({position: index});
+        if (isUpdating && this.props.onPositionChanged) {
+            this.props.onPositionChanged(index);
+        }
     }
 
     _getPosition() {
@@ -79,22 +78,17 @@ export default class ImageSlider extends Component {
         return this.state.position;
     }
 
-    componentWillReceiveProps(props) {
-        if (props.position !== undefined) {
-            this.setState({scrolling: true});
-            this._move(props.position);
+    componentDidUpdate(prevProps) {
+        if (prevProps.position !== this.props.position) {
+            this._move(this.props.position);
         }
     }
 
     componentWillMount() {
-        const width = Dimensions.get('window').width;
-
-        if (typeof this.props.position === 'number') {
-            this.state.left.setValue(-(width * this.props.position));
-        }
+        const width = this.state.width;
 
         let release = (e, gestureState) => {
-            const width = Dimensions.get('window').width;
+            const width = this.state.width;
             const relativeDistance = gestureState.dx / width;
             const vx = gestureState.vx;
             let change = 0;
@@ -115,27 +109,15 @@ export default class ImageSlider extends Component {
         };
 
         this._panResponder = PanResponder.create({
-            onMoveShouldSetPanResponderCapture: (evt, gestureState) => Math.abs(gestureState.dx) > 5,
-            onPanResponderRelease: release,
-            onPanResponderTerminate: release,
-            onPanResponderMove: (e, gestureState) => {
-                const dx = gestureState.dx;
-                const width = Dimensions.get('window').width;
-                const position = this._getPosition();
-                let left = -(position * width) + Math.round(dx);
-                if (left > 0) {
-                    left = Math.sin(left / width) * (width / 2);
-                } else if (left < -(width * (this.props.images.length - 1))) {
-                    const diff = left + (width * (this.props.images.length - 1));
-                    left = Math.sin(diff / width) * (width / 2) - (width * (this.props.images.length - 1));
-                }
-                this.state.left.setValue(left);
-                if (!this.state.scrolling) {
-                    this.setState({scrolling: true});
-                }
-            },
-            onShouldBlockNativeResponder: () => true
+            onPanResponderRelease: release
         });
+
+        this._interval = setInterval(() => {
+            const newWidth = Dimensions.get('window').width;
+            if (newWidth !== this.state.width) {
+                this.setState({width: newWidth});
+            }
+        }, 16);
     }
 
     componentWillUnmount() {
@@ -145,46 +127,50 @@ export default class ImageSlider extends Component {
     }
 
     render() {
-        const customStyles = this.props.style ? this.props.style : {};
-        const width = Dimensions.get('window').width;
+        const width = this.state.width;
         const height = this.props.height || this.state.height;
         const position = this._getPosition();
         return (<View>
-            <Animated.View
-                style={[styles.container, customStyles, {height: height, width: width * this.props.images.length, transform: [{translateX: this.state.left}]}]}
-                {...this._panResponder.panHandlers}>
-                    {this.props.images.map((image, index) => {
-                      const imageComponent = <Image
-                                                key={index}
-                                                source={{uri: image}}
-                                                style={{height: position === index || this.state.scrolling ? height : 0, width}}
-                                              />;
-                      if (this.props.onPress) {
+            <ScrollView
+                ref={ref => this._onRef(ref)}
+                decelerationRate={'fast'}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                {...this._panResponder.panHandlers}
+                style={[styles.container, this.props.style, {height: height}]}>
+                {this.props.images.map((image, index) => {
+                    const imageObject = typeof image === 'string' ? {uri: image} : image;
+                    const imageComponent = <Image
+                        key={index}
+                        source={imageObject}
+                        style={{height, width}}
+                    />;
+                    if (this.props.onPress) {
                         return (
-                          <TouchableOpacity
-                            key={index}
-                            onPress={() => this.props.onPress({ image, index })}
-                            delayPressIn={200}
-                          >
-                            {imageComponent}
-                          </TouchableOpacity>
+                            <TouchableOpacity
+                                key={index}
+                                style={{height, width}}
+                                onPress={() => this.props.onPress({image, index})}
+                                delayPressIn={200}
+                            >
+                                {imageComponent}
+                            </TouchableOpacity>
                         );
-                      } else {
+                    } else {
                         return imageComponent;
-                      }
-                    })}
-            </Animated.View>
+                    }
+                })}
+            </ScrollView>
             <View style={styles.buttons}>
                 {this.props.images.map((image, index) => {
                     return (<TouchableHighlight
                         key={index}
                         underlayColor="#ccc"
                         onPress={() => {
-                            this.setState({scrolling: true});
                             return this._move(index);
                         }}
                         style={[styles.button, position === index && styles.buttonSelected]}>
-                            <View></View>
+                        <View></View>
                     </TouchableHighlight>);
                 })}
             </View>
