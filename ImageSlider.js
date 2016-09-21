@@ -48,7 +48,6 @@ export default class ImageSlider extends Component {
             height: Dimensions.get('window').width * (4 / 9),
             width: Dimensions.get('window').width,
             scrolling: false,
-            timeout: null
         };
     }
 
@@ -61,9 +60,6 @@ export default class ImageSlider extends Component {
 
     _move(index) {
         const isUpdating = index !== this._getPosition();
-        if (this.state.timeout) {
-            clearTimeout(this.state.timeout);
-        }
         this._ref.scrollTo({x: this.state.width * index, y: 0, animated: true});
         this.setState({position: index});
         if (isUpdating && this.props.onPositionChanged) {
@@ -121,9 +117,7 @@ export default class ImageSlider extends Component {
     }
 
     componentWillUnmount() {
-        if (this.state.timeout) {
-            clearTimeout(this.state.timeout);
-        }
+        clearInterval(this._interval);
     }
 
     render() {
