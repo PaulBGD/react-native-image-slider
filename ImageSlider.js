@@ -16,7 +16,6 @@ const reactNativePackage = require('react-native/package.json');
 const splitVersion = reactNativePackage.version.split('.');
 const majorVersion = +splitVersion[0];
 const minorVersion = +splitVersion[1];
-console.log(majorVersion, minorVersion);
 
 const styles = StyleSheet.create({
     container: {
