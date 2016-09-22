@@ -127,7 +127,7 @@ export default class ImageSlider extends Component {
         return (<View>
             <ScrollView
                 ref={ref => this._onRef(ref)}
-                decelerationRate={'fast'}
+                decelerationRate={0.99}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
                 {...this._panResponder.panHandlers}
