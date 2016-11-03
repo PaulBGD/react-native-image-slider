@@ -4,9 +4,9 @@
   "description": "A easy to use image slider for React Native",
   "main": "ImageSlider.js",
   "author": {
-      "name": "Paul Sauve",
-      "email": "paul@burngames.net",
-      "url": "https://paulb.gd"
+    "name": "Paul Sauve",
+    "email": "paul@burngames.net",
+    "url": "https://paulb.gd"
   },
   "license": "MIT",
   "repository": {
