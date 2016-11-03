@@ -64,12 +64,13 @@ export default class ImageSlider extends Component {
     }
 
     _move(index) {
+        const width = this.props.width || this.state.width;
         const isUpdating = index !== this._getPosition();
-        const x = this.state.width * index;
+        const x = width * index;
         if (majorVersion === 0 && minorVersion <= 19) {
             this._ref.scrollTo(0, x, true); // use old syntax
         } else {
-            this._ref.scrollTo({x: this.state.width * index, y: 0, animated: true});
+            this._ref.scrollTo({x: width * index, y: 0, animated: true});
         }
         this.setState({position: index});
         if (isUpdating && this.props.onPositionChanged) {
@@ -91,10 +92,8 @@ export default class ImageSlider extends Component {
     }
 
     componentWillMount() {
-        const width = this.state.width;
-
         let release = (e, gestureState) => {
-            const width = this.state.width;
+            const width = this.props.width || this.state.width;
             const relativeDistance = gestureState.dx / width;
             const vx = gestureState.vx;
             let change = 0;
@@ -119,8 +118,9 @@ export default class ImageSlider extends Component {
         });
 
         this._interval = setInterval(() => {
+            const width = this.props.width || this.state.width;
             const newWidth = Dimensions.get('window').width;
-            if (newWidth !== this.state.width) {
+            if (newWidth !== width) {
                 this.setState({width: newWidth});
             }
         }, 16);
@@ -131,7 +131,7 @@ export default class ImageSlider extends Component {
     }
 
     render() {
-        const width = this.state.width;
+        const width = this.props.width || this.state.width;
         const height = this.props.height || this.state.height;
         const position = this._getPosition();
         return (<View>

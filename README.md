@@ -30,7 +30,8 @@ If you want to change the height, simply pass a height to the component.
 
 ### Props
 
-* `height`: controls the height. By default the height is static, is this if you want the height to change
+* `width`: controls the width. By default the width is static. Specify this property to change the width
+* `height`: controls the height. By default the height is static. Specify this property to change the height
 * `onPositionChanged`: called when the current position is changed
 * `position`: used for controlled components
 * `onPress`: returns an object with image url and index of image pressed
