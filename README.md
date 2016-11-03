@@ -34,7 +34,8 @@ If you want to change the height, simply pass a height to the component.
 * `onPositionChanged`: called when the current position is changed
 * `position`: used for controlled components
 * `onPress`: returns an object with image url and index of image pressed
-* `style`: add custom styles
+* `style`: add custom styles to the view
+* `imageStyle`: add custom styles to the images
 
 ### Autoplay Example
 
