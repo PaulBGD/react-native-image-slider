@@ -71,7 +71,7 @@ class SliderTests extends Component {
                     position={this.state.position}
                     onPositionChanged={position => this.setState({position})}/>
             </View>
-        );
+        ); 
     }
 }
 ```
