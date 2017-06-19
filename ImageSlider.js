@@ -11,6 +11,11 @@ import {
     Dimensions
 } from 'react-native';
 
+const reactNativePackage = require('react-native/package.json');
+const splitVersion = reactNativePackage.version.split('.');
+const majorVersion = +splitVersion[0];
+const minorVersion = +splitVersion[1];
+
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
@@ -57,20 +62,28 @@ export default class ImageSlider extends Component {
         }
     }
 
+    _scrollTo = majorVersion === 0 && minorVersion <= 19 
+        ? (opts) => {
+            this._ref.scrollTo(opts.y, opts.x, opts.animated); // use old syntax
+        }
+        : (opts) => {
+            this._ref.scrollTo({x: opts.x, y: opts.y, animated: opts.animated});
+        }
+
     _move(index, flag) {
         const isUpdating = index !== this._getPosition();
 
-        //Since ScrollView not support AnimationEnd event with android.
+        //Since ScrollView not support AnimationEnd event with android
         if (index >= this.props.images.length) {
             setTimeout(function () {
-                this._ref.scrollTo({x: this.state.width * (0 + 1), y: 0, animated: false});
+                this._scrollTo({x: this.state.width * (0 + 1), y: 0, animated: false});
             }.bind(this), 200);
         } else if (index < 0) {
             setTimeout(function () {
-                this._ref.scrollTo({x: this.state.width * (this.props.images.length), y: 0, animated: false});
+                this._scrollTo({x: this.state.width * (this.props.images.length), y: 0, animated: false});
             }.bind(this), 200);
         }
-        this._ref.scrollTo({x: this.state.width * (index + 1), y: 0, animated: flag == undefined ? true : flag});
+        this._scrollTo({x: this.state.width * (index + 1), y: 0, animated: flag == undefined ? true : flag});
 
         index = (index < 0 ? (index + this.props.images.length) : index) % this.props.images.length;
 
@@ -153,25 +166,12 @@ export default class ImageSlider extends Component {
                 style={[styles.container, this.props.style, {height: height}]}>
                 {images.map((image, index) => {
                     const imageObject = typeof image === 'string' ? {uri: image} : image;
-                    const imageComponent = <Image
-                        key={index}
-                        source={imageObject}
-                        style={{height, width}}
-                    />;
-                    if (this.props.onPress) {
-                        return (
-                            <TouchableOpacity
-                                key={index}
-                                style={{height, width}}
-                                onPress={() => this.props.onPress({image, index})}
-                                delayPressIn={200}
-                            >
-                                {imageComponent}
-                            </TouchableOpacity>
-                        );
-                    } else {
-                        return imageComponent;
-                    }
+                    return (
+                        <Image
+                            key={index}
+                            source={imageObject}
+                            style={{height, width}}/>
+                    )
                 })}
             </ScrollView>
             <View style={styles.buttons}>
