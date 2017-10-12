@@ -84,6 +84,31 @@ export default class ImageSlider extends Component {
         return this.state.position;
     }
 
+    _onMomentumScrollEnd(event) {
+        const width = this.state.width;
+        const relativeDistance = event.nativeEvent.contentOffset.x / width;
+
+        const newPosition = Math.round(relativeDistance);
+        const oldPosition = this._getPosition();
+
+        if(newPosition !== oldPosition) {
+          this._move(newPosition);
+        }
+    }
+
+    _getImageComponent(index,imageObject, height, width) {
+        if(this.props.renderImageComponent) {
+            return this.props.renderImageComponent(index,imageObject, height, width);
+        }
+        return (
+            <Image
+                key={index}
+                source={imageObject}
+                style={{height, width}}
+            />
+        );
+    }
+
     componentDidUpdate(prevProps) {
         if (prevProps.position !== this.props.position) {
             this._move(this.props.position);
@@ -140,15 +165,12 @@ export default class ImageSlider extends Component {
                 decelerationRate={0.99}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
+                onMomentumScrollEnd={(e) => this._onMomentumScrollEnd(e)}
                 {...this._panResponder.panHandlers}
                 style={[styles.container, this.props.style, {height: height}]}>
                 {this.props.images.map((image, index) => {
                     const imageObject = typeof image === 'string' ? {uri: image} : image;
-                    const imageComponent = <Image
-                        key={index}
-                        source={imageObject}
-                        style={{height, width}}
-                    />;
+                    const imageComponent = this._getImageComponent(index,imageObject,height,width);
                     if (this.props.onPress) {
                         return (
                             <TouchableOpacity
