@@ -1,3 +1,5 @@
+I am currently looking for a new maintaing for this project. If you're interested check https://github.com/PaulBGD/react-native-image-slider/issues/45.
+
 # react-native-image-slider
 A quick and easy image slider for react native.
 
