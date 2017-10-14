@@ -37,6 +37,8 @@ If you want to change the height, simply pass a height to the component.
 * `position`: used for controlled components
 * `onPress`: returns an object with image url and index of image pressed
 * `style`: add custom styles
+* `resizeMode`: add custom resizeMode to images
+* `hideBottomBar`: hide bottom bar
 
 ### Autoplay Example
 
