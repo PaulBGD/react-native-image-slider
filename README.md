@@ -20,9 +20,9 @@ import ImageSlider from 'react-native-image-slider';
 
 render() {
     return (<ImageSlider images={[
-        'http://placeimg.com/640/480/any',
-        'http://placeimg.com/640/480/any',
-        'http://placeimg.com/640/480/any'
+        'https://placeimg.com/640/480/any',
+        'https://placeimg.com/640/480/any',
+        'https://placeimg.com/640/480/any'
     ]}/>)
 }
 ```
@@ -66,9 +66,9 @@ class SliderTests extends Component {
             <View style={styles.container}>
                 <ImageSlider
                     images={[
-                        `http://placeimg.com/640/480/any`,
-                        `http://placeimg.com/640/480/any`,
-                        `http://placeimg.com/640/480/any`,
+                        `https://placeimg.com/640/480/any`,
+                        `https://placeimg.com/640/480/any`,
+                        `https://placeimg.com/640/480/any`,
                     ]}
                     position={this.state.position}
                     onPositionChanged={position => this.setState({position})}/>
