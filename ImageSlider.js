@@ -134,8 +134,8 @@ export default class ImageSlider extends Component {
         const width = this.state.width;
         const height = this.props.height || this.state.height;
         const position = this._getPosition();
-        return (<View>
-            <ScrollView
+        return (<View style={this.props.hideBottomBar ? {maxHeight:height} : null} >
+            <ScrollView 
                 ref={ref => this._onRef(ref)}
                 decelerationRate={0.99}
                 horizontal={true}
@@ -148,6 +148,7 @@ export default class ImageSlider extends Component {
                         key={index}
                         source={imageObject}
                         style={{height, width}}
+                        resizeMode={this.props.resizeMode ? this.props.resizeMode : null}
                     />;
                     if (this.props.onPress) {
                         return (
@@ -165,19 +166,21 @@ export default class ImageSlider extends Component {
                     }
                 })}
             </ScrollView>
-            <View style={styles.buttons}>
-                {this.props.images.map((image, index) => {
-                    return (<TouchableHighlight
-                        key={index}
-                        underlayColor="#ccc"
-                        onPress={() => {
-                            return this._move(index);
-                        }}
-                        style={[styles.button, position === index && styles.buttonSelected]}>
-                        <View></View>
-                    </TouchableHighlight>);
-                })}
-            </View>
+            { !this.props.hideBottomBar ? 
+                <View style={styles.buttons}>
+                    {this.props.images.map((image, index) => {
+                        return (<TouchableHighlight
+                            key={index}
+                            underlayColor="#ccc"
+                            onPress={() => {
+                                return this._move(index);
+                            }}
+                            style={[styles.button, position === index && styles.buttonSelected]}>
+                            <View></View>
+                        </TouchableHighlight>);
+                    })}
+                </View> : null
+            }
         </View>);
     }
 }
