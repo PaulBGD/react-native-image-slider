@@ -12,11 +12,6 @@ import {
     Dimensions
 } from 'react-native';
 
-const reactNativePackage = require('react-native/package.json');
-const splitVersion = reactNativePackage.version.split('.');
-const majorVersion = +splitVersion[0];
-const minorVersion = +splitVersion[1];
-
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
@@ -25,7 +20,7 @@ const styles = StyleSheet.create({
     buttons: {
         height: 15,
         marginTop: -15,
-        flex: 1,
+        flexGrow: 1,
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row'
@@ -54,6 +49,9 @@ export default class ImageSlider extends Component {
             width: Dimensions.get('window').width,
             scrolling: false,
         };
+
+        this._handleScroll = this._handleScroll.bind(this)
+        this._handleScrollEnd = debounce(this._handleScrollEnd.bind(this), 100).bind(this)
     }
 
     _onRef(ref) {
@@ -64,13 +62,10 @@ export default class ImageSlider extends Component {
     }
 
     _move(index) {
+        const width = this.props.width || this.state.width;
         const isUpdating = index !== this._getPosition();
-        const x = this.state.width * index;
-        if (majorVersion === 0 && minorVersion <= 19) {
-            this._ref.scrollTo(0, x, true); // use old syntax
-        } else {
-            this._ref.scrollTo({x: this.state.width * index, y: 0, animated: true});
-        }
+        const x = width * index;
+        this._ref.scrollTo({x: width * index, y: 0, animated: true});
         this.setState({position: index});
         if (isUpdating && this.props.onPositionChanged) {
             this.props.onPositionChanged(index);
@@ -84,6 +79,16 @@ export default class ImageSlider extends Component {
         return this.state.position;
     }
 
+    _handleScroll(event) {
+        this._handleScrollEnd(event.nativeEvent.contentOffset)
+    }
+
+    _handleScrollEnd(contentOffset) {
+        const width = this.props.width || this.state.width
+        const index = Math.round(contentOffset.x / width)
+        this._move(index)
+    }
+
     componentDidUpdate(prevProps) {
         if (prevProps.position !== this.props.position) {
             this._move(this.props.position);
@@ -94,7 +99,7 @@ export default class ImageSlider extends Component {
         const width = this.state.width;
 
         let release = (e, gestureState) => {
-            const width = this.state.width;
+            const width = this.props.width || this.state.width;
             const relativeDistance = gestureState.dx / width;
             const vx = gestureState.vx;
             let change = 0;
@@ -119,8 +124,9 @@ export default class ImageSlider extends Component {
         });
 
         this._interval = setInterval(() => {
+            const width = this.props.width || this.state.width;
             const newWidth = Dimensions.get('window').width;
-            if (newWidth !== this.state.width) {
+            if (newWidth !== width) {
                 this.setState({width: newWidth});
             }
         }, 16);
@@ -131,7 +137,7 @@ export default class ImageSlider extends Component {
     }
 
     render() {
-        const width = this.state.width;
+        const width = this.props.width || this.state.width;
         const height = this.props.height || this.state.height;
         const position = this._getPosition();
         return (<View>
@@ -140,6 +146,8 @@ export default class ImageSlider extends Component {
                 decelerationRate={0.99}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
+                onScroll={this._handleScroll}
+                scrollEventThrottle={16}
                 {...this._panResponder.panHandlers}
                 style={[styles.container, this.props.style, {height: height}]}>
                 {this.props.images.map((image, index) => {
@@ -147,7 +155,7 @@ export default class ImageSlider extends Component {
                     const imageComponent = <Image
                         key={index}
                         source={imageObject}
-                        style={{height, width}}
+                        style={[this.props.imageStyle, {height, width}]}
                     />;
                     if (this.props.onPress) {
                         return (
@@ -180,4 +188,19 @@ export default class ImageSlider extends Component {
             </View>
         </View>);
     }
+}
+
+function debounce(func, wait, immediate) {
+     var timeout;
+     return function() {
+         var context = this, args = arguments;
+         var later = function() {
+             timeout = null;
+             if (!immediate) func.apply(context, args);
+         };
+         var callNow = immediate && !timeout;
+         clearTimeout(timeout);
+         timeout = setTimeout(later, wait);
+         if (callNow) func.apply(context, args);
+     };
 }
