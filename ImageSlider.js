@@ -1,12 +1,9 @@
 import React, {Component} from 'react';
 import {
     Image,
-    Text,
     View,
     ScrollView,
     StyleSheet,
-    Animated,
-    PanResponder,
     TouchableHighlight,
     TouchableOpacity,
     Dimensions
