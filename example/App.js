@@ -31,6 +31,7 @@ class App extends Component<{}> {
           <Text style={styles.contentText}>Content 1</Text>
         </View>
         <ImageSlider
+          loop
           autoPlayWithInterval={3000}
           images={images}
           customButtons={(position, move) => (
