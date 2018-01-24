@@ -1,53 +1,22 @@
-I am currently looking for a new maintainer for this project. If you're interested check https://github.com/PaulBGD/react-native-image-slider/issues/45.
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ * @flow
+ */
 
-# react-native-image-slider
+import React, { Component } from 'react';
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  TouchableHighlight,
+} from 'react-native';
 
-A quick and easy image slider for react native.
-
-![GIF](final.gif)
-
-## Installation
-
-```bash
-npm install react-native-image-slider --save
-```
-
-or
-
-```bash
-yarn add react-native-image-slider
-```
-
-## Usage
-
-```javascript
 import ImageSlider from 'react-native-image-slider';
 
-// ...
-
-render() {
-  return (<ImageSlider images={[
-    'http://placeimg.com/640/480/any',
-    'http://placeimg.com/640/480/any',
-    'http://placeimg.com/640/480/any'
-  ]}/>)
-}
-```
-
-### Props
-
-* `images`: rendered images
-* `customButtons`: function returns custom pagination buttons component, it's got position index and move to position function as arguments
-* `autoPlayWithInterval`: activates autoplay when passed (it uses milliseconds)
-* `onPositionChanged`: called when the current position is changed
-* `position`: used for controlled components
-* `onPress`: returns an object with image url and index of image pressed
-* `style`: styles ScrollView inside ImageSlider, you may pass height here (100% by default)
-
-### Autoplay / Custom buttons
-
-```javascript
-class Example extends Component<{}> {
+class App extends Component<{}> {
   render() {
     const images = [
       'https://placeimg.com/640/640/nature',
@@ -90,8 +59,50 @@ class Example extends Component<{}> {
     );
   }
 }
-```
 
-## License
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5FCFF',
+  },
+  slider: { backgroundColor: '#000', height: 350 },
+  content1: {
+    width: '100%',
+    height: 50,
+    marginBottom: 10,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  content2: {
+    width: '100%',
+    height: 100,
+    marginTop: 10,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contentText: { color: '#fff' },
+  buttons: {
+    height: 15,
+    marginTop: -25,
+    marginBottom: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  button: {
+    margin: 3,
+    width: 15,
+    height: 15,
+    opacity: 0.9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonSelected: {
+    opacity: 1,
+    color: 'red',
+  },
+});
 
-MIT
+export default App;
