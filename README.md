@@ -39,6 +39,7 @@ render() {
 * `images`: rendered images
 * `customButtons`: function returns custom pagination buttons component, it's got position index and move to position function as arguments
 * `autoPlayWithInterval`: activates autoplay when passed (it uses milliseconds)
+* `loop`: loops scroll of images, but in one direction only
 * `onPositionChanged`: called when the current position is changed
 * `position`: used for controlled components
 * `onPress`: returns an object with image url and index of image pressed
