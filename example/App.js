@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Image,
   SafeAreaView,
   TouchableHighlight,
 } from 'react-native';
@@ -35,6 +36,12 @@ class App extends Component<{}> {
           autoPlayWithInterval={3000}
           images={images}
           onPress={({ index }) => alert(index)}
+          customSlide={({ index, item, style, width }) => (
+            // It's important to put style here because it's got offset inside
+            <View key={index} style={[style, styles.customSlide]}>
+              <Image source={{ uri: item }} style={styles.customImage} />
+            </View>
+          )}
           customButtons={(position, move) => (
             <View style={styles.buttons}>
               {images.map((image, index) => {
@@ -104,6 +111,15 @@ const styles = StyleSheet.create({
   buttonSelected: {
     opacity: 1,
     color: 'red',
+  },
+  customSlide: {
+    backgroundColor: 'green',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  customImage: {
+    width: 100,
+    height: 100,
   },
 });
 

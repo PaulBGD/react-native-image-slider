@@ -19,6 +19,13 @@ const splitVersion = reactNativePackage.version.split('.');
 const majorVersion = +splitVersion[0];
 const minorVersion = +splitVersion[1];
 
+type Slide = {
+  index: number,
+  style?: any,
+  width?: number,
+  item?: any,
+};
+
 type PropsType = {
   images: string[],
   style?: any,
@@ -29,6 +36,7 @@ type PropsType = {
   onPositionChanged?: number => void,
   onPress?: Object => void,
   customButtons?: (number, (number) => void) => Node,
+  customSlide?: Slide => Node,
 };
 
 type StateType = {
@@ -183,12 +191,22 @@ class ImageSlider extends Component<PropsType, StateType> {
 
   _renderImage = (image: any, index: number) => {
     const { width } = this.state;
-    const { onPress } = this.props;
-    const imageObject = typeof image === 'string' ? { uri: image } : image;
+    const { onPress, customSlide } = this.props;
     const offset = { marginLeft: index === -1 ? -width : 0 };
-    const imageStyle = [styles.image, { width }, !onPress && offset];
+    const imageStyle = [styles.image, { width }, offset];
+
+    if (customSlide) {
+      return customSlide({ item: image, style: imageStyle, index, width });
+    }
+
+    const imageObject = typeof image === 'string' ? { uri: image } : image;
+
     const imageComponent = (
-      <Image key={index} source={imageObject} style={imageStyle} />
+      <Image
+        key={index}
+        source={imageObject}
+        style={[imageStyle, !onPress && offset]}
+      />
     );
 
     if (onPress) {
@@ -231,7 +249,7 @@ class ImageSlider extends Component<PropsType, StateType> {
           ref={ref => this._onRef(ref)}
           decelerationRate={0.99}
           horizontal={true}
-          bounces={false}
+          bounces={loopBothSides}
           onScroll={this._loop}
           scrollEnabled={scrollEnabled}
           showsHorizontalScrollIndicator={false}

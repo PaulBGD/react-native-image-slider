@@ -38,6 +38,7 @@ render() {
 
 * `images`: rendered images
 * `customButtons`: function returns custom pagination buttons component, it's got position index and move to position function as arguments
+* `customSlide`: function returns Node with arguments `index` - images list index, `item` - anything you pass inside images prop, `style` - for top component of yout custom slide, `width` - calculated slide width,
 * `autoPlayWithInterval`: activates autoplay when passed (it uses milliseconds)
 * `loop`: loops scroll of images, but in one direction only
 * `loopBothSides:` same as loop, but does it in any direction
@@ -46,7 +47,7 @@ render() {
 * `onPress`: returns an object with image url and index of image pressed
 * `style`: styles ScrollView inside ImageSlider, you may pass height here (100% by default)
 
-### Autoplay / Custom buttons
+### Autoplay / Custom buttons / Custom slide / Loop
 
 ```javascript
 class Example extends Component<{}> {
@@ -67,6 +68,12 @@ class Example extends Component<{}> {
           loopBothSides
           autoPlayWithInterval={3000}
           images={images}
+          customSlide={({ index, item, style, width }) => (
+            // It's important to put style here because it's got offset inside
+            <View key={index} style={[style, styles.customSlide]}>
+              <Image source={{ uri: item }} style={styles.customImage} />
+            </View>
+          )}
           customButtons={(position, move) => (
             <View style={styles.buttons}>
               {images.map((image, index) => {
