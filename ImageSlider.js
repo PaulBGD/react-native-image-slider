@@ -56,6 +56,15 @@ class ImageSlider extends Component<PropsType, StateType> {
     }
   };
 
+  // In iOS you can pop view by swiping left, with active ScrollView
+  // you can't do that. This View on top of ScrollView enables call of
+  // pop function.
+  _popHelperView = () =>
+    !this.props.loopBothSides &&
+    this._getPosition() === 0 && (
+      <View style={{ position: 'absolute', width: 50, height: '100%' }} />
+    );
+
   _loop = (event: any) => {
     const { loop, loopBothSides, images } = this.props;
     const { width } = this.state;
@@ -198,6 +207,12 @@ class ImageSlider extends Component<PropsType, StateType> {
     return imageComponent;
   };
 
+  // We make shure, that, when loop is active,
+  // fake images at the begin and at the end of ScrollView
+  // do not scroll.
+  _scrollEnabled = (position: number) =>
+    position !== -1 && position !== this.props.images.length;
+
   render() {
     const {
       onPress,
@@ -208,6 +223,7 @@ class ImageSlider extends Component<PropsType, StateType> {
       loopBothSides,
     } = this.props;
     const position = this._getPosition();
+    const scrollEnabled = this._scrollEnabled(position);
 
     return (
       <View style={styles.container} onLayout={this._onLayout}>
@@ -215,7 +231,9 @@ class ImageSlider extends Component<PropsType, StateType> {
           ref={ref => this._onRef(ref)}
           decelerationRate={0.99}
           horizontal={true}
+          bounces={false}
           onScroll={this._loop}
+          scrollEnabled={scrollEnabled}
           showsHorizontalScrollIndicator={false}
           {...this._panResponder.panHandlers}
           style={[styles.scrollViewContainer, style || { height: '100%' }]}
@@ -244,6 +262,7 @@ class ImageSlider extends Component<PropsType, StateType> {
             ))}
           </View>
         )}
+        {this._popHelperView()}
       </View>
     );
   }
