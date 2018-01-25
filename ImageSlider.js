@@ -23,6 +23,7 @@ type PropsType = {
   images: string[],
   style?: any,
   loop?: boolean,
+  loopBothSides?: boolean,
   autoPlayWithInterval?: number,
   position?: number,
   onPositionChanged?: number => void,
@@ -55,11 +56,17 @@ class ImageSlider extends Component<PropsType, StateType> {
     }
   };
 
-  _loop = (event: any) =>
-    this.props.loop &&
-    event.nativeEvent.contentOffset.x ===
-      this.state.width * this.props.images.length &&
-    this._move(0, false);
+  _loop = (event: any) => {
+    const { loop, loopBothSides, images } = this.props;
+    const { width } = this.state;
+    const { x } = event.nativeEvent.contentOffset;
+
+    if ((loop || loopBothSides) && x === width * images.length) {
+      this._move(0, false);
+    } else if (loopBothSides && x === -width) {
+      this._move(images.length - 1, false);
+    }
+  };
 
   _move = (index: number, animated: boolean = true) => {
     const isUpdating = index !== this._getPosition();
@@ -100,14 +107,15 @@ class ImageSlider extends Component<PropsType, StateType> {
 
   _setInterval = () => {
     this._clearInterval();
-    const { autoPlayWithInterval, images, loop } = this.props;
+    const { autoPlayWithInterval, images, loop, loopBothSides } = this.props;
 
     if (autoPlayWithInterval) {
       this.setState({
         interval: setInterval(
           () =>
             this._move(
-              !loop && this.state.position === images.length - 1
+              !(loop || loopBothSides) &&
+              this.state.position === images.length - 1
                 ? 0
                 : this.state.position + 1,
             ),
@@ -120,7 +128,7 @@ class ImageSlider extends Component<PropsType, StateType> {
   componentWillMount() {
     let release = (e, gestureState) => {
       const { width } = this.state;
-      const { images, loop } = this.props;
+      const { images, loop, loopBothSides } = this.props;
       const relativeDistance = gestureState.dx / width;
       const vx = gestureState.vx;
       let change = 0;
@@ -135,10 +143,14 @@ class ImageSlider extends Component<PropsType, StateType> {
       }
       const position = this._getPosition();
       if (position === 0 && change === -1) {
-        change = 0;
+        if (!this.props.loopBothSides) {
+          change = 0;
+        }
       } else if (position + change >= images.length) {
-        change = loop ? 1 : images.length - (position + change);
+        change =
+          loop || loopBothSides ? 1 : images.length - (position + change);
       }
+
       this._move(position + change);
       return true;
     };
@@ -164,32 +176,37 @@ class ImageSlider extends Component<PropsType, StateType> {
     const { width } = this.state;
     const { onPress } = this.props;
     const imageObject = typeof image === 'string' ? { uri: image } : image;
+    const offset = { marginLeft: index === -1 ? -width : 0 };
+    const imageStyle = [styles.image, { width }, !onPress && offset];
     const imageComponent = (
-      <Image
-        key={index}
-        source={imageObject}
-        style={[styles.image, { width }]}
-      />
+      <Image key={index} source={imageObject} style={imageStyle} />
     );
 
     if (onPress) {
       return (
         <TouchableOpacity
           key={index}
-          style={styles.image}
+          style={[imageStyle, offset]}
           onPress={() => onPress && onPress({ image, index })}
           delayPressIn={200}
         >
           {imageComponent}
         </TouchableOpacity>
       );
-    } else {
-      return imageComponent;
     }
+
+    return imageComponent;
   };
 
   render() {
-    const { onPress, customButtons, style, loop, images } = this.props;
+    const {
+      onPress,
+      customButtons,
+      style,
+      loop,
+      images,
+      loopBothSides,
+    } = this.props;
     const position = this._getPosition();
 
     return (
@@ -203,8 +220,10 @@ class ImageSlider extends Component<PropsType, StateType> {
           {...this._panResponder.panHandlers}
           style={[styles.scrollViewContainer, style || { height: '100%' }]}
         >
+          {loopBothSides && this._renderImage(images[images.length - 1], -1)}
           {images.map(this._renderImage)}
-          {loop && this._renderImage(images[0], images.length)}
+          {(loop || loopBothSides) &&
+            this._renderImage(images[0], images.length)}
         </ScrollView>
         {customButtons ? (
           customButtons(position, this._move)

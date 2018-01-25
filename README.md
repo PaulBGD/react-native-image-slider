@@ -40,6 +40,7 @@ render() {
 * `customButtons`: function returns custom pagination buttons component, it's got position index and move to position function as arguments
 * `autoPlayWithInterval`: activates autoplay when passed (it uses milliseconds)
 * `loop`: loops scroll of images, but in one direction only
+* `loopBothSides:` same as loop, but does it in any direction
 * `onPositionChanged`: called when the current position is changed
 * `position`: used for controlled components
 * `onPress`: returns an object with image url and index of image pressed
@@ -63,6 +64,7 @@ class Example extends Component<{}> {
           <Text style={styles.contentText}>Content 1</Text>
         </View>
         <ImageSlider
+          loopBothSides
           autoPlayWithInterval={3000}
           images={images}
           customButtons={(position, move) => (
