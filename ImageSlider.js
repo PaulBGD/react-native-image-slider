@@ -160,12 +160,14 @@ class ImageSlider extends Component<PropsType, StateType> {
       }
       const position = this._getPosition();
       if (position === 0 && change === -1) {
-        if (!this.props.loopBothSides) {
+        if (!this.props.loopBothSides || position === -1) {
           change = 0;
         }
       } else if (position + change >= images.length) {
         change =
-          loop || loopBothSides ? 1 : images.length - (position + change);
+          (loop || loopBothSides) && position !== images.length
+            ? 1
+            : images.length - (position + change);
       }
 
       this._move(position + change);
