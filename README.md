@@ -34,19 +34,6 @@ render() {
 }
 ```
 
-### Props
-
-* `images`: rendered images
-* `customButtons`: function returns custom pagination buttons component, it's got position index and move to position function as arguments
-* `customSlide`: function returns Node with arguments `index` - images list index, `item` - anything you pass inside images prop, `style` - for top component of yout custom slide, `width` - calculated slide width,
-* `autoPlayWithInterval`: activates autoplay when passed (it uses milliseconds)
-* `loop`: loops scroll of images, but in one direction only
-* `loopBothSides:` same as loop, but does it in any direction
-* `onPositionChanged`: called when the current position is changed
-* `position`: used for controlled components
-* `onPress`: returns an object with image url and index of image pressed
-* `style`: styles ScrollView inside ImageSlider, you may pass height here (100% by default)
-
 ### Autoplay / Custom buttons / Custom slide / Loop
 
 ```javascript
@@ -101,6 +88,48 @@ class Example extends Component<{}> {
   }
 }
 ```
+
+## Props
+
+### `images`
+
+rendered images
+
+### `customButtons`
+
+function returns custom pagination buttons component, it's got position index and move to position function as arguments
+
+### `customSlide`
+
+function returns Node with arguments `index` - images list index, `item` - anything you pass inside images prop, `style` - for top component of yout custom slide, `width` - calculated slide width,
+
+### `autoPlayWithInterval`
+
+activates autoplay when passed (it uses milliseconds)
+
+### `loop`
+
+[BUGGY ON ANDROID] loops scroll of images, but in one direction only
+
+### `loopBothSides`
+
+[IOS ONLY] same as loop, but does it in any direction
+
+### `onPositionChanged`
+
+called when the current position is changed
+
+### `position`
+
+used for controlled components
+
+### `onPress`
+
+returns an object with image url and index of image pressed
+
+### `style`
+
+styles ScrollView inside ImageSlider, you may pass height here (100% by default)
 
 ## License
 

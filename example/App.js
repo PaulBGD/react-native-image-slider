@@ -11,7 +11,6 @@ import {
   Text,
   View,
   Image,
-  SafeAreaView,
   TouchableHighlight,
 } from 'react-native';
 
@@ -27,18 +26,25 @@ class App extends Component<{}> {
     ];
 
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <View style={styles.content1}>
           <Text style={styles.contentText}>Content 1</Text>
         </View>
         <ImageSlider
-          loopBothSides
+          loop
           autoPlayWithInterval={3000}
           images={images}
           onPress={({ index }) => alert(index)}
           customSlide={({ index, item, style, width }) => (
             // It's important to put style here because it's got offset inside
-            <View key={index} style={[style, styles.customSlide]}>
+            <View
+              key={index}
+              style={[
+                style,
+                styles.customSlide,
+                { backgroundColor: index % 2 === 0 ? 'yellow' : 'green' },
+              ]}
+            >
               <Image source={{ uri: item }} style={styles.customImage} />
             </View>
           )}
@@ -64,7 +70,7 @@ class App extends Component<{}> {
         <View style={styles.content2}>
           <Text style={styles.contentText}>Content 2</Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -93,6 +99,7 @@ const styles = StyleSheet.create({
   },
   contentText: { color: '#fff' },
   buttons: {
+    zIndex: 1,
     height: 15,
     marginTop: -25,
     marginBottom: 10,

@@ -35,7 +35,7 @@ type PropsType = {
   position?: number,
   onPositionChanged?: number => void,
   onPress?: Object => void,
-  customButtons?: (number, (number) => void) => Node,
+  customButtons?: (number, (number, animated?: boolean) => void) => Node,
   customSlide?: Slide => Node,
 };
 
@@ -73,27 +73,11 @@ class ImageSlider extends Component<PropsType, StateType> {
       <View style={{ position: 'absolute', width: 50, height: '100%' }} />
     );
 
-  _loop = (event: any) => {
-    const { loop, loopBothSides, images } = this.props;
-    const { width } = this.state;
-    const { x } = event.nativeEvent.contentOffset;
-
-    if ((loop || loopBothSides) && x === width * images.length) {
-      this._move(0, false);
-    } else if (loopBothSides && x === -width) {
-      this._move(images.length - 1, false);
-    }
-  };
-
   _move = (index: number, animated: boolean = true) => {
     const isUpdating = index !== this._getPosition();
-    const x = this.state.width * index;
+    const x = Dimensions.get('window').width * index;
 
-    if (majorVersion === 0 && minorVersion <= 19) {
-      this._ref && this._ref.scrollTo(0, x, animated); // use old syntax
-    } else {
-      this._ref && this._ref.scrollTo({ y: 0, x, animated });
-    }
+    this._ref && this._ref.scrollTo({ y: 0, x, animated });
 
     this.setState({ position: index });
 
@@ -142,43 +126,35 @@ class ImageSlider extends Component<PropsType, StateType> {
     }
   };
 
+  _handleScroll = (event: Object) => {
+    const { position, width } = this.state;
+    const { loop, loopBothSides, images, onPositionChanged } = this.props;
+    const isUpdating = position !== this._getPosition();
+    const { x } = event.nativeEvent.contentOffset;
+
+    if (
+      (loop || loopBothSides) &&
+      x.toFixed() >= +(width * images.length).toFixed()
+    ) {
+      return this._move(0, false);
+    } else if (loopBothSides && x.toFixed() <= +(-width).toFixed()) {
+      return this._move(images.length - 1, false);
+    }
+
+    if (position !== -1 && position !== images.length) {
+      this.setState({
+        position: Math.round(event.nativeEvent.contentOffset.x / width),
+      });
+    }
+
+    if (isUpdating && onPositionChanged) {
+      onPositionChanged(position);
+    }
+
+    this._setInterval();
+  };
+
   componentWillMount() {
-    let release = (e, gestureState) => {
-      const { width } = this.state;
-      const { images, loop, loopBothSides } = this.props;
-      const relativeDistance = gestureState.dx / width;
-      const vx = gestureState.vx;
-      let change = 0;
-
-      if (relativeDistance < -0.5 || (relativeDistance < 0 && vx <= 0.5)) {
-        change = 1;
-      } else if (
-        relativeDistance > 0.5 ||
-        (relativeDistance > 0 && vx >= 0.5)
-      ) {
-        change = -1;
-      }
-      const position = this._getPosition();
-      if (position === 0 && change === -1) {
-        if (!this.props.loopBothSides || position === -1) {
-          change = 0;
-        }
-      } else if (position + change >= images.length) {
-        change =
-          (loop || loopBothSides) && position !== images.length
-            ? 1
-            : images.length - (position + change);
-      }
-
-      this._move(position + change);
-      return true;
-    };
-
-    this._panResponder = PanResponder.create({
-      onPanResponderMove: this._clearInterval,
-      onPanResponderRelease: release,
-    });
-
     this._setInterval();
   }
 
@@ -188,11 +164,11 @@ class ImageSlider extends Component<PropsType, StateType> {
 
   _onLayout = () => {
     this.setState({ width: Dimensions.get('window').width });
-    this._move(this._getPosition());
+    this._move(this.state.position, false);
   };
 
   _renderImage = (image: any, index: number) => {
-    const { width } = this.state;
+    const { width } = Dimensions.get('window');
     const { onPress, customSlide } = this.props;
     const offset = { marginLeft: index === -1 ? -width : 0 };
     const imageStyle = [styles.image, { width }, offset];
@@ -204,11 +180,7 @@ class ImageSlider extends Component<PropsType, StateType> {
     const imageObject = typeof image === 'string' ? { uri: image } : image;
 
     const imageComponent = (
-      <Image
-        key={index}
-        source={imageObject}
-        style={[imageStyle, !onPress && offset]}
-      />
+      <Image key={index} source={imageObject} style={[imageStyle]} />
     );
 
     if (onPress) {
@@ -248,15 +220,17 @@ class ImageSlider extends Component<PropsType, StateType> {
     return (
       <View style={styles.container} onLayout={this._onLayout}>
         <ScrollView
+          onLayout={this._onLayout}
           ref={ref => this._onRef(ref)}
-          decelerationRate={0.99}
-          horizontal={true}
+          onMomentumScrollEnd={this._handleScroll}
+          scrollEventThrottle={16}
+          pagingEnabled={true}
           bounces={loopBothSides}
-          onScroll={this._loop}
+          contentInset={loopBothSides ? { left: this.state.width } : {}}
+          horizontal={true}
           scrollEnabled={scrollEnabled}
           showsHorizontalScrollIndicator={false}
-          {...this._panResponder.panHandlers}
-          style={[styles.scrollViewContainer, style || { height: '100%' }]}
+          style={[styles.scrollViewContainer, style]}
         >
           {loopBothSides && this._renderImage(images[images.length - 1], -1)}
           {images.map(this._renderImage)}
