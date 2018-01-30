@@ -42,15 +42,15 @@ type PropsType = {
 type StateType = {
   position: number,
   width: number,
-  scrolling: boolean,
   interval: any,
+  onPositionChangedCalled: boolean,
 };
 
 class ImageSlider extends Component<PropsType, StateType> {
   state = {
     position: 0,
     width: Dimensions.get('window').width,
-    scrolling: false,
+    onPositionChangedCalled: false,
     interval: null,
   };
 
@@ -83,6 +83,7 @@ class ImageSlider extends Component<PropsType, StateType> {
 
     if (isUpdating && this.props.onPositionChanged) {
       this.props.onPositionChanged(index);
+      this.setState({ onPositionChangedCalled: true });
     }
 
     this._setInterval();
@@ -129,7 +130,6 @@ class ImageSlider extends Component<PropsType, StateType> {
   _handleScroll = (event: Object) => {
     const { position, width } = this.state;
     const { loop, loopBothSides, images, onPositionChanged } = this.props;
-    const isUpdating = position !== this._getPosition();
     const { x } = event.nativeEvent.contentOffset;
 
     if (
@@ -147,8 +147,10 @@ class ImageSlider extends Component<PropsType, StateType> {
       });
     }
 
-    if (isUpdating && onPositionChanged) {
+    if (onPositionChanged && !this.state.onPositionChangedCalled) {
       onPositionChanged(position);
+    } else {
+      this.setState({ onPositionChangedCalled: false });
     }
 
     this._setInterval();
