@@ -36,6 +36,5 @@ npm-debug.log
 # React Native
 android/
 ios/
-.flowconfig
 .watchmanconfig
 index.*.js
