@@ -1,6 +1,6 @@
 {
   "name": "react-native-image-slider",
-  "version": "1.1.5",
+  "version": "2.0.0",
   "description": "A easy to use image slider for React Native",
   "main": "ImageSlider.js",
   "author": {
@@ -8,6 +8,12 @@
     "email": "paul@burngames.net",
     "url": "https://paulb.gd"
   },
+  "contributors": [
+    {
+      "name": "Artiom Shapovalov",
+      "email": "vaomamago@gmail.com"
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
