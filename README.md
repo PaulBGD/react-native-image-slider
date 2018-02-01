@@ -107,7 +107,7 @@ function returns custom pagination buttons component, it's got position index an
 
 ### `customSlide`
 
-function returns Node with arguments `index` - images list index, `item` - anything you pass inside images prop, `style` - for top component of yout custom slide, `width` - calculated slide width,
+function returns Node with arguments `index` - images list index, `item` - anything you pass inside images prop, `style` - for top component of your custom slide, `width` - calculated slide width
 
 ### `autoPlayWithInterval`
 
