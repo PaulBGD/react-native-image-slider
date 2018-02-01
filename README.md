@@ -15,7 +15,7 @@ yarn add https://github.com/PaulBGD/react-native-image-slider
 ```
 
 ## Installation [OLD VERSION]
-
+Not recommended
 ```bash
 npm install react-native-image-slider --save
 ```
