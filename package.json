@@ -1,6 +1,6 @@
 {
   "name": "react-native-image-slider",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A easy to use image slider for React Native",
   "main": "ImageSlider.js",
   "author": {

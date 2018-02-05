@@ -38,3 +38,5 @@ android/
 ios/
 .watchmanconfig
 index.*.js
+
+yarn-error.log
