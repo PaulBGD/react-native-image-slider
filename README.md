@@ -4,18 +4,8 @@ A quick and easy image slider for react native.
 
 ![GIF](final.gif)
 
-## Installation [NEW VERSION]
-Temporary it is
-```bach
-npm install https://github.com/PaulBGD/react-native-image-slider --save
-```
-or
-```bash
-yarn add https://github.com/PaulBGD/react-native-image-slider
-```
+## Installation
 
-## Installation [OLD VERSION]
-Not recommended
 ```bash
 npm install react-native-image-slider --save
 ```
