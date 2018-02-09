@@ -78,7 +78,12 @@ class ImageSlider extends Component<PropsType, StateType> {
 
     this.setState({ position: index });
 
-    if (isUpdating && this.props.onPositionChanged) {
+    if (
+      isUpdating &&
+      this.props.onPositionChanged &&
+      index < this.props.images.length &&
+      index > -1
+    ) {
       this.props.onPositionChanged(index);
       this.setState({ onPositionChangedCalled: true });
     }
@@ -138,14 +143,20 @@ class ImageSlider extends Component<PropsType, StateType> {
       return this._move(images.length - 1, false);
     }
 
+    let newPosition = 0;
+
     if (position !== -1 && position !== images.length) {
-      this.setState({
-        position: Math.round(event.nativeEvent.contentOffset.x / width),
-      });
+      newPosition = Math.round(event.nativeEvent.contentOffset.x / width);
+      this.setState({ position: newPosition });
     }
 
-    if (onPositionChanged && !this.state.onPositionChangedCalled) {
-      onPositionChanged(position);
+    if (
+      onPositionChanged &&
+      !this.state.onPositionChangedCalled &&
+      newPosition < images.length &&
+      newPosition > -1
+    ) {
+      onPositionChanged(newPosition);
     } else {
       this.setState({ onPositionChangedCalled: false });
     }
