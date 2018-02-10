@@ -228,7 +228,7 @@ class ImageSlider extends Component<PropsType, StateType> {
     const scrollEnabled = this._scrollEnabled(position);
 
     return (
-      <View style={styles.container} onLayout={this._onLayout}>
+      <View style={[styles.container, style]} onLayout={this._onLayout}>
         <ScrollView
           onLayout={this._onLayout}
           ref={ref => this._onRef(ref)}
