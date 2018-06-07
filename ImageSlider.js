@@ -2,7 +2,6 @@
 
 import React, { type Node, Component } from 'react';
 import {
-  Image,
   View,
   ScrollView,
   StyleSheet,
@@ -10,6 +9,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import { Image } from "react-native-expo-image-cache";
 
 const reactNativePackage = require('react-native/package.json');
 const splitVersion = reactNativePackage.version.split('.');
@@ -188,9 +188,9 @@ class ImageSlider extends Component<PropsType, StateType> {
     }
 
     const imageObject = typeof image === 'string' ? { uri: image } : image;
-
+    const preview = { uri: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAAEsAQMAAADHEKwxAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABlBMVEX/nhv///+oM33+AAAAAWJLR0QB/wIt3gAAAB9JREFUaN7twTEBAAAAwqD1T+1pCaAAAAAAAAAAAABuJFQAAaZI2/wAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTgtMDMtMjJUMTE6MDI6MzgrMDE6MDByQIztAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE4LTAzLTIyVDExOjAyOjM4KzAxOjAwAx00UQAAAABJRU5ErkJggg==" };
     const imageComponent = (
-      <Image key={index} source={imageObject} style={[imageStyle]} />
+      <Image key={index} style={[imageStyle]} preview={preview} uri={image} />
     );
 
     if (onPress) {
@@ -254,7 +254,7 @@ class ImageSlider extends Component<PropsType, StateType> {
             {this.props.images.map((image, index) => (
               <TouchableHighlight
                 key={index}
-                underlayColor="#ccc"
+                underlayColor="#fff"
                 onPress={() => this._move(index)}
                 style={[
                   styles.button,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flexDirection: 'row',
-    backgroundColor: '#222',
+    backgroundColor: '#fff',
   },
   image: {
     width: 200,
@@ -297,12 +297,12 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 8 / 2,
-    backgroundColor: '#ccc',
+    backgroundColor: '#c7c9c7',
     opacity: 0.9,
   },
   buttonSelected: {
     opacity: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FF9E1B',
   },
 });
 
