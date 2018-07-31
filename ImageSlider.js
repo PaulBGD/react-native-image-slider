@@ -93,9 +93,9 @@ class ImageSlider extends Component<PropsType, StateType> {
 
   _getPosition() {
     if (typeof this.props.position === 'number') {
-      return this.props.position;
+      return this.props.position % this.props.images.length;
     }
-    return this.state.position;
+    return this.state.position % this.props.images.length;
   }
 
   componentDidUpdate(prevProps: Object) {
@@ -214,7 +214,14 @@ class ImageSlider extends Component<PropsType, StateType> {
   // do not scroll.
   _scrollEnabled = (position: number) =>
     position !== -1 && position !== this.props.images.length;
-
+  moveNext = () => {
+    const next = (this.state.position + 1) % this.props.images.length;
+    this._move(next, true);
+  }
+  movePrev = () => {
+    const prev = (this.state.position + this.props.images.length - 1) % this.props.images.length;
+    this._move(prev, true);
+  }
   render() {
     const {
       onPress,
