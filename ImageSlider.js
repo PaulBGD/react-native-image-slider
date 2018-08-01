@@ -11,11 +11,6 @@ import {
   Dimensions,
 } from 'react-native';
 
-const reactNativePackage = require('react-native/package.json');
-const splitVersion = reactNativePackage.version.split('.');
-const majorVersion = +splitVersion[0];
-const minorVersion = +splitVersion[1];
-
 type Slide = {
   index: number,
   style?: any,
@@ -44,12 +39,17 @@ type StateType = {
 };
 
 class ImageSlider extends Component<PropsType, StateType> {
-  state = {
-    position: 0,
-    width: Dimensions.get('window').width,
-    onPositionChangedCalled: false,
-    interval: null,
-  };
+  constructor(props){
+    super(props);
+    this.state = {
+      position: 0,
+      width: Dimensions.get('window').width,
+      onPositionChangedCalled: false,
+      interval: null
+    };
+    this.autoPlayFlag = props.autoPlayFlag;
+  }
+  
 
   _ref = null;
   _panResponder = {};
@@ -71,6 +71,9 @@ class ImageSlider extends Component<PropsType, StateType> {
     );
 
   _move = (index: number, animated: boolean = true) => {
+    if ( !this.autoPlayFlag ){
+      return;
+    } 
     const isUpdating = index !== this._getPosition();
     const x = Dimensions.get('window').width * index;
 
@@ -97,10 +100,9 @@ class ImageSlider extends Component<PropsType, StateType> {
     }
     return this.state.position % this.props.images.length;
   }
-
   componentDidUpdate(prevProps: Object) {
-    const { position } = this.props;
-
+    const { position, autoPlayFlag } = this.props;
+    this.autoPlayFlag = autoPlayFlag;
     if (position && prevProps.position !== position) {
       this._move(position);
     }
@@ -112,7 +114,6 @@ class ImageSlider extends Component<PropsType, StateType> {
   _setInterval = () => {
     this._clearInterval();
     const { autoPlayWithInterval, images, loop, loopBothSides } = this.props;
-
     if (autoPlayWithInterval) {
       this.setState({
         interval: setInterval(
