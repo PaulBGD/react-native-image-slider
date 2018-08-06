@@ -11,6 +11,11 @@ import {
   Dimensions,
 } from 'react-native';
 
+const reactNativePackage = require('react-native/package.json');
+const splitVersion = reactNativePackage.version.split('.');
+const majorVersion = +splitVersion[0];
+const minorVersion = +splitVersion[1];
+
 type Slide = {
   index: number,
   style?: any,
@@ -39,17 +44,12 @@ type StateType = {
 };
 
 class ImageSlider extends Component<PropsType, StateType> {
-  constructor(props){
-    super(props);
-    this.state = {
-      position: 0,
-      width: Dimensions.get('window').width,
-      onPositionChangedCalled: false,
-      interval: null
-    };
-    this.autoPlayFlag = props.autoPlayFlag;
-  }
-  
+  state = {
+    position: 0,
+    width: Dimensions.get('window').width,
+    onPositionChangedCalled: false,
+    interval: null,
+  };
 
   _ref = null;
   _panResponder = {};
@@ -70,10 +70,10 @@ class ImageSlider extends Component<PropsType, StateType> {
       <View style={{ position: 'absolute', width: 50, height: '100%' }} />
     );
 
-  _move = (index: number, animated: boolean = true) => {
-    if ( !this.autoPlayFlag ){
+  _move = (index: number, animated: boolean = true, autoCalled: boolean = true) => {
+    if ( !this.autoPlayFlag && autoCalled){
       return;
-    } 
+    }
     const isUpdating = index !== this._getPosition();
     const x = Dimensions.get('window').width * index;
 
@@ -100,6 +100,7 @@ class ImageSlider extends Component<PropsType, StateType> {
     }
     return this.state.position % this.props.images.length;
   }
+
   componentDidUpdate(prevProps: Object) {
     const { position, autoPlayFlag } = this.props;
     this.autoPlayFlag = autoPlayFlag;
@@ -114,6 +115,7 @@ class ImageSlider extends Component<PropsType, StateType> {
   _setInterval = () => {
     this._clearInterval();
     const { autoPlayWithInterval, images, loop, loopBothSides } = this.props;
+
     if (autoPlayWithInterval) {
       this.setState({
         interval: setInterval(
@@ -217,11 +219,11 @@ class ImageSlider extends Component<PropsType, StateType> {
     position !== -1 && position !== this.props.images.length;
   moveNext = () => {
     const next = (this.state.position + 1) % this.props.images.length;
-    this._move(next, true);
+    this._move(next, true, false);
   }
   movePrev = () => {
     const prev = (this.state.position + this.props.images.length - 1) % this.props.images.length;
-    this._move(prev, true);
+    this._move(prev, true, false);
   }
   render() {
     const {
