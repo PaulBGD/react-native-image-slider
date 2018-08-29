@@ -24,7 +24,7 @@ type Slide = {
 };
 
 type PropsType = {
-  images: string[],
+  images: Array<number | string>,
   style?: any,
   loop?: boolean,
   loopBothSides?: boolean,
