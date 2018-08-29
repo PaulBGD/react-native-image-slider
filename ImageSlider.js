@@ -286,8 +286,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     height: 15,
-    marginTop: -25,
-    marginBottom: 10,
+    marginTop: -15,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
