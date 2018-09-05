@@ -70,7 +70,10 @@ class ImageSlider extends Component<PropsType, StateType> {
       <View style={{ position: 'absolute', width: 50, height: '100%' }} />
     );
 
-  _move = (index: number, animated: boolean = true) => {
+  _move = (index: number, animated: boolean = true, autoCalled: boolean = true) => {
+    if ( !this.autoPlayFlag && autoCalled){
+      return;
+    }
     const isUpdating = index !== this._getPosition();
     const x = Dimensions.get('window').width * index;
 
@@ -93,14 +96,14 @@ class ImageSlider extends Component<PropsType, StateType> {
 
   _getPosition() {
     if (typeof this.props.position === 'number') {
-      return this.props.position;
+      return this.props.position % this.props.images.length;
     }
-    return this.state.position;
+    return this.state.position % this.props.images.length;
   }
 
   componentDidUpdate(prevProps: Object) {
-    const { position } = this.props;
-
+    const { position, autoPlayFlag } = this.props;
+    this.autoPlayFlag = autoPlayFlag;
     if (position && prevProps.position !== position) {
       this._move(position);
     }
@@ -214,7 +217,14 @@ class ImageSlider extends Component<PropsType, StateType> {
   // do not scroll.
   _scrollEnabled = (position: number) =>
     position !== -1 && position !== this.props.images.length;
-
+  moveNext = () => {
+    const next = (this.state.position + 1) % this.props.images.length;
+    this._move(next, true, false);
+  }
+  movePrev = () => {
+    const prev = (this.state.position + this.props.images.length - 1) % this.props.images.length;
+    this._move(prev, true, false);
+  }
   render() {
     const {
       onPress,
