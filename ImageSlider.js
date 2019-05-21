@@ -1,6 +1,6 @@
 // @flow
 
-import React, { type Node, Component } from 'react';
+import React, { type Node, Component } from "react";
 import {
   Image,
   View,
@@ -8,11 +8,11 @@ import {
   StyleSheet,
   TouchableHighlight,
   TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+  Dimensions
+} from "react-native";
 
-const reactNativePackage = require('react-native/package.json');
-const splitVersion = reactNativePackage.version.split('.');
+const reactNativePackage = require("react-native/package.json");
+const splitVersion = reactNativePackage.version.split(".");
 const majorVersion = +splitVersion[0];
 const minorVersion = +splitVersion[1];
 
@@ -20,7 +20,7 @@ type Slide = {
   index: number,
   style?: any,
   width?: number,
-  item?: any,
+  item?: any
 };
 
 type PropsType = {
@@ -33,22 +33,22 @@ type PropsType = {
   onPositionChanged?: number => void,
   onPress?: Object => void,
   customButtons?: (number, (number, animated?: boolean) => void) => Node,
-  customSlide?: Slide => Node,
+  customSlide?: Slide => Node
 };
 
 type StateType = {
   position: number,
   width: number,
   interval: any,
-  onPositionChangedCalled: boolean,
+  onPositionChangedCalled: boolean
 };
 
 class ImageSlider extends Component<PropsType, StateType> {
   state = {
     position: 0,
-    width: Dimensions.get('window').width,
+    width: Dimensions.get("window").width,
     onPositionChangedCalled: false,
-    interval: null,
+    interval: null
   };
 
   _ref = null;
@@ -67,15 +67,19 @@ class ImageSlider extends Component<PropsType, StateType> {
   _popHelperView = () =>
     !this.props.loopBothSides &&
     this._getPosition() === 0 && (
-      <View style={{ position: 'absolute', width: 50, height: '100%' }} />
+      <View style={{ position: "absolute", width: 50, height: "100%" }} />
     );
 
-  _move = (index: number, animated: boolean = true, autoCalled: boolean = true) => {
-    if ( !this.autoPlayFlag && autoCalled){
+  _move = (
+    index: number,
+    animated: boolean = true,
+    autoCalled: boolean = true
+  ) => {
+    if (!this.autoPlayFlag && autoCalled) {
       return;
     }
     const isUpdating = index !== this._getPosition();
-    const x = Dimensions.get('window').width * index;
+    const x = Dimensions.get("window").width * index;
 
     this._ref && this._ref.scrollTo({ y: 0, x, animated });
 
@@ -95,7 +99,7 @@ class ImageSlider extends Component<PropsType, StateType> {
   };
 
   _getPosition() {
-    if (typeof this.props.position === 'number') {
+    if (typeof this.props.position === "number") {
       return this.props.position % this.props.images.length;
     }
     return this.state.position % this.props.images.length;
@@ -122,12 +126,12 @@ class ImageSlider extends Component<PropsType, StateType> {
           () =>
             this._move(
               !(loop || loopBothSides) &&
-              this.state.position === images.length - 1
+                this.state.position === images.length - 1
                 ? 0
-                : this.state.position + 1,
+                : this.state.position + 1
             ),
-          autoPlayWithInterval,
-        ),
+          autoPlayWithInterval
+        )
       });
     }
   };
@@ -176,12 +180,12 @@ class ImageSlider extends Component<PropsType, StateType> {
   }
 
   _onLayout = () => {
-    this.setState({ width: Dimensions.get('window').width });
+    this.setState({ width: Dimensions.get("window").width });
     this._move(this.state.position, false);
   };
 
   _renderImage = (image: any, index: number) => {
-    const { width } = Dimensions.get('window');
+    const { width } = Dimensions.get("window");
     const { onPress, customSlide } = this.props;
     const offset = { marginLeft: index === -1 ? -width : 0 };
     const imageStyle = [styles.image, { width }, offset];
@@ -190,10 +194,10 @@ class ImageSlider extends Component<PropsType, StateType> {
       return customSlide({ item: image, style: imageStyle, index, width });
     }
 
-    const imageObject = typeof image === 'string' ? { uri: image } : image;
+    const imageObject = typeof image === "string" ? { uri: image } : image;
 
     const imageComponent = (
-      <Image key={index} source={imageObject} style={[imageStyle]} />
+      <Image key={index} src={imageObject} style={[imageStyle]} />
     );
 
     if (onPress) {
@@ -220,11 +224,13 @@ class ImageSlider extends Component<PropsType, StateType> {
   moveNext = () => {
     const next = (this.state.position + 1) % this.props.images.length;
     this._move(next, true, false);
-  }
+  };
   movePrev = () => {
-    const prev = (this.state.position + this.props.images.length - 1) % this.props.images.length;
+    const prev =
+      (this.state.position + this.props.images.length - 1) %
+      this.props.images.length;
     this._move(prev, true, false);
-  }
+  };
   render() {
     const {
       onPress,
@@ -232,7 +238,7 @@ class ImageSlider extends Component<PropsType, StateType> {
       style,
       loop,
       images,
-      loopBothSides,
+      loopBothSides
     } = this.props;
     const position = this._getPosition();
     const scrollEnabled = this._scrollEnabled(position);
@@ -268,7 +274,7 @@ class ImageSlider extends Component<PropsType, StateType> {
                 onPress={() => this._move(index)}
                 style={[
                   styles.button,
-                  position === index && styles.buttonSelected,
+                  position === index && styles.buttonSelected
                 ]}
               >
                 <View />
@@ -284,36 +290,36 @@ class ImageSlider extends Component<PropsType, StateType> {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   scrollViewContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#222',
+    flexDirection: "row",
+    backgroundColor: "#222"
   },
   image: {
     width: 200,
-    height: '100%',
+    height: "100%"
   },
   buttons: {
     height: 15,
     marginTop: -25,
     marginBottom: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row"
   },
   button: {
     margin: 3,
     width: 8,
     height: 8,
     borderRadius: 8 / 2,
-    backgroundColor: '#ccc',
-    opacity: 0.9,
+    backgroundColor: "#ccc",
+    opacity: 0.9
   },
   buttonSelected: {
     opacity: 1,
-    backgroundColor: '#fff',
-  },
+    backgroundColor: "#fff"
+  }
 });
 
 export default ImageSlider;
