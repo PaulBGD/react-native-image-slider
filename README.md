@@ -1,4 +1,4 @@
-# react-native-image-slider
+# react-native-image-slider ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 
 A quick and easy image slider for react native.
 
