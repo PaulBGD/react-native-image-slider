@@ -71,7 +71,7 @@ class ImageSlider extends Component<PropsType, StateType> {
     );
 
   _move = (index: number, animated: boolean = true, autoCalled: boolean = true) => {
-    if ( !this.autoPlayFlag && autoCalled){
+    if (!this.autoPlayFlag && autoCalled) {
       return;
     }
     const isUpdating = index !== this._getPosition();
@@ -122,7 +122,7 @@ class ImageSlider extends Component<PropsType, StateType> {
           () =>
             this._move(
               !(loop || loopBothSides) &&
-              this.state.position === images.length - 1
+                this.state.position === images.length - 1
                 ? 0
                 : this.state.position + 1,
             ),
@@ -167,7 +167,7 @@ class ImageSlider extends Component<PropsType, StateType> {
     this._setInterval();
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this._setInterval();
   }
 
@@ -260,22 +260,22 @@ class ImageSlider extends Component<PropsType, StateType> {
         {customButtons ? (
           customButtons(position, this._move)
         ) : (
-          <View style={styles.buttons}>
-            {this.props.images.map((image, index) => (
-              <TouchableHighlight
-                key={index}
-                underlayColor="#ccc"
-                onPress={() => this._move(index)}
-                style={[
-                  styles.button,
-                  position === index && styles.buttonSelected,
-                ]}
-              >
-                <View />
-              </TouchableHighlight>
-            ))}
-          </View>
-        )}
+            <View style={styles.buttons}>
+              {this.props.images.map((image, index) => (
+                <TouchableHighlight
+                  key={index}
+                  underlayColor="#ccc"
+                  onPress={() => this._move(index)}
+                  style={[
+                    styles.button,
+                    position === index && styles.buttonSelected,
+                  ]}
+                >
+                  <View />
+                </TouchableHighlight>
+              ))}
+            </View>
+          )}
         {this._popHelperView()}
       </View>
     );
