@@ -34,6 +34,8 @@ type PropsType = {
   onPress?: Object => void,
   customButtons?: (number, (number, animated?: boolean) => void) => Node,
   customSlide?: Slide => Node,
+  width?: number,
+  backgroundColor?: string,
 };
 
 type StateType = {
@@ -44,12 +46,15 @@ type StateType = {
 };
 
 class ImageSlider extends Component<PropsType, StateType> {
-  state = {
-    position: 0,
-    width: Dimensions.get('window').width,
-    onPositionChangedCalled: false,
-    interval: null,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      position: 0,
+      width: props.width || Dimensions.get('window').width,
+      onPositionChangedCalled: false,
+      interval: null,
+    };
+  }
 
   _ref = null;
   _panResponder = {};
@@ -75,7 +80,7 @@ class ImageSlider extends Component<PropsType, StateType> {
       return;
     }
     const isUpdating = index !== this._getPosition();
-    const x = Dimensions.get('window').width * index;
+    const x = this.state.width * index;
 
     this._ref && this._ref.scrollTo({ y: 0, x, animated });
 
@@ -176,7 +181,6 @@ class ImageSlider extends Component<PropsType, StateType> {
   }
 
   _onLayout = () => {
-    this.setState({ width: Dimensions.get('window').width });
     this._move(this.state.position, false);
   };
 
@@ -233,9 +237,11 @@ class ImageSlider extends Component<PropsType, StateType> {
       loop,
       images,
       loopBothSides,
+      backgroundColor,
     } = this.props;
     const position = this._getPosition();
     const scrollEnabled = this._scrollEnabled(position);
+    const customBackgroundColor = backgroundColor ? { backgroundColor } : null;
 
     return (
       <View style={[styles.container, style]} onLayout={this._onLayout}>
@@ -250,7 +256,7 @@ class ImageSlider extends Component<PropsType, StateType> {
           horizontal={true}
           scrollEnabled={scrollEnabled}
           showsHorizontalScrollIndicator={false}
-          style={[styles.scrollViewContainer, style]}
+          style={[styles.scrollViewContainer, style, customBackgroundColor]}
         >
           {loopBothSides && this._renderImage(images[images.length - 1], -1)}
           {images.map(this._renderImage)}
