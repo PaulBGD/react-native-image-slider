@@ -1,5 +1,11 @@
 # react-native-image-slider
 
+### Query for new maintainer?
+Hi, my name is Jacob. I am part of a startup that sets to serve communities by promoting engagement, diversity, and inclusion through an app. As a developer working with React, I realized how heavily (and I mean heavily) I rely on the contributions others make online to help bring my product to life. That being said, I think its my time that I start to make an impact online too. 
+
+I know its been some time, but I saw you were looking for a maintainer for your react-native-image-slider repo. I am pretty familiar with React and JS, and I would love to help out. If there is anything I can do, please let me know!
+
+### Back to Image Slider
 A quick and easy image slider for react native.
 
 ![GIF](final.gif)
