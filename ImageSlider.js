@@ -32,6 +32,7 @@ type PropsType = {
   position?: number,
   onPositionChanged?: number => void,
   onPress?: Object => void,
+  onLoad?: Object => void,
   customButtons?: (number, (number, animated?: boolean) => void) => Node,
   customSlide?: Slide => Node,
   imagesWidth: number
@@ -185,7 +186,7 @@ class ImageSlider extends Component<PropsType, StateType> {
 
   _renderImage = (image: any, index: number) => {
     const { width } = Dimensions.get('window');
-    const { onPress, customSlide } = this.props;
+    const { onPress, onLoad, customSlide } = this.props;
     const offset = { marginLeft: index === -1 ? -width : 0 };
     const imageStyle = [styles.image, { width }, offset];
 
@@ -196,7 +197,7 @@ class ImageSlider extends Component<PropsType, StateType> {
     const imageObject = typeof image === 'string' ? { uri: image } : image;
 
     const imageComponent = (
-      <Image key={index} source={imageObject} style={[imageStyle]} />
+      <Image key={index} source={imageObject} onLoad={(e)=>onLoad(e.nativeEvent.source)} style={[imageStyle]} />
     );
 
     if (onPress) {
