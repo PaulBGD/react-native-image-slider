@@ -2,7 +2,8 @@
   "name": "react-native-image-slider",
   "version": "2.0.4",
   "description": "A easy to use image slider for React Native",
-  "main": "ImageSlider.js",
+  "main": "lib/ImageSlider.js",
+  "types": "lib/ImageSlider.d.ts",
   "author": {
     "name": "Paul Sauve",
     "email": "paul@burngames.net",
@@ -20,10 +21,16 @@
     "url": "https://github.com/PaulBGD/react-native-image-slider"
   },
   "peerDependencies": {
+    "react": "*",
     "react-native": "*"
   },
   "devDependencies": {
-    "flow-bin": "^0.101.1",
-    "flow-typed": "^2.5.2"
+    "@tsconfig/react-native": "^1.0.4",
+    "@types/react": "^17.0.27",
+    "@types/react-native": "^0.65.5",
+    "typescript": "^4.4.3"
+  },
+  "scripts": {
+    "build": "tsc"
   }
 }

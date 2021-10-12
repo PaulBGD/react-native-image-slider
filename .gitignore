@@ -40,3 +40,5 @@ ios/
 index.*.js
 
 yarn-error.log
+
+lib/
