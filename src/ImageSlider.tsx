@@ -72,13 +72,10 @@ class ImageSlider extends Component<PropsType, StateType> {
     );
 
   _move = (index: number, animated: boolean = true, autoCalled: boolean = true) => {
-    if (autoCalled) {
-      return;
-    }
     const isUpdating = index !== this._getPosition();
     const x = (this.props.imagesWidth ?
-	this.props.imagesWidth : Dimensions.get("window").width)
-	* index;
+      this.props.imagesWidth : Dimensions.get("window").width)
+      * index;
 
     this._ref && this._ref.scrollTo({ y: 0, x, animated });
 

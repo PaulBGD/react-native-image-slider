@@ -52,7 +52,7 @@ class App extends Component<{}> {
                     onPress={() => move(index)}
                     style={styles.button}
                   >
-                    <Text style={position === index && styles.buttonSelected}>
+                    <Text style={position === index ? styles.buttonSelected : styles.buttonDeselected}>
                       {index + 1}
                     </Text>
                   </TouchableHighlight>
@@ -112,6 +112,10 @@ const styles = StyleSheet.create({
   buttonSelected: {
     opacity: 1,
     color: 'red',
+  },
+  buttonDeselected: {
+    opacity: 1,
+    color: 'black',
   },
   customSlide: {
     backgroundColor: 'green',
