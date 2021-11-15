@@ -1,6 +1,4 @@
-// @flow
-
-import React, { type Node, Component } from 'react';
+import React, { Component, ReactNode } from 'react';
 import {
   Image,
   View,
@@ -9,6 +7,8 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   Dimensions,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 
 const reactNativePackage = require('react-native/package.json');
@@ -16,28 +16,28 @@ const splitVersion = reactNativePackage.version.split('.');
 const majorVersion = +splitVersion[0];
 const minorVersion = +splitVersion[1];
 
-type Slide = {
+interface Slide {
   index: number,
   style?: any,
   width?: number,
   item?: any,
 };
 
-type PropsType = {
+interface PropsType {
   images: Array<number | string>,
   style?: any,
   loop?: boolean,
   loopBothSides?: boolean,
   autoPlayWithInterval?: number,
   position?: number,
-  onPositionChanged?: number => void,
-  onPress?: Object => void,
-  customButtons?: (number, (number, animated?: boolean) => void) => Node,
-  customSlide?: Slide => Node,
-  imagesWidth: number
+  onPositionChanged?: (newPosition: number) => void,
+  onPress?: (object: {image: any, index: number}) => void,
+  customButtons?: (position: number, move: (index: number, animated?: boolean) => void) => ReactNode,
+  customSlide?: (slide: Slide) => ReactNode,
+  imagesWidth?: number
 };
 
-type StateType = {
+interface StateType {
   position: number,
   width: number,
   interval: any,
@@ -52,7 +52,7 @@ class ImageSlider extends Component<PropsType, StateType> {
     interval: null,
   };
 
-  _ref = null;
+  _ref: any = null;
   _panResponder = {};
 
   _onRef = (ref: any) => {
@@ -72,13 +72,10 @@ class ImageSlider extends Component<PropsType, StateType> {
     );
 
   _move = (index: number, animated: boolean = true, autoCalled: boolean = true) => {
-    if (!this.autoPlayFlag && autoCalled) {
-      return;
-    }
     const isUpdating = index !== this._getPosition();
     const x = (this.props.imagesWidth ?
-	this.props.imagesWidth : Dimensions.get("window").width)
-	* index;
+      this.props.imagesWidth : Dimensions.get("window").width)
+      * index;
 
     this._ref && this._ref.scrollTo({ y: 0, x, animated });
 
@@ -104,9 +101,8 @@ class ImageSlider extends Component<PropsType, StateType> {
     return this.state.position % this.props.images.length;
   }
 
-  componentDidUpdate(prevProps: Object) {
-    const { position, autoPlayFlag } = this.props;
-    this.autoPlayFlag = autoPlayFlag;
+  componentDidUpdate(prevProps: PropsType) {
+    const { position } = this.props;
     if (position && prevProps.position !== position) {
       this._move(position);
     }
@@ -135,17 +131,17 @@ class ImageSlider extends Component<PropsType, StateType> {
     }
   };
 
-  _handleScroll = (event: Object) => {
+  _handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { position, width } = this.state;
     const { loop, loopBothSides, images, onPositionChanged } = this.props;
     const { x } = event.nativeEvent.contentOffset;
 
     if (
       (loop || loopBothSides) &&
-      x.toFixed() >= +(width * images.length).toFixed()
+      x >= +(width * images.length)
     ) {
       return this._move(0, false);
-    } else if (loopBothSides && x.toFixed() <= +(-width).toFixed()) {
+    } else if (loopBothSides && x <= +(-width)) {
       return this._move(images.length - 1, false);
     }
 
@@ -230,7 +226,6 @@ class ImageSlider extends Component<PropsType, StateType> {
   }
   render() {
     const {
-      onPress,
       customButtons,
       style,
       loop,
