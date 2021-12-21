@@ -24,7 +24,10 @@ type Slide = {
 };
 
 type PropsType = {
-  images: Array<number | string>,
+  images: string[],
+  startPrefix: string,
+  endPrefix: string,
+  imageKey: string,
   style?: any,
   loop?: boolean,
   loopBothSides?: boolean,
@@ -34,7 +37,6 @@ type PropsType = {
   onPress?: Object => void,
   customButtons?: (number, (number, animated?: boolean) => void) => Node,
   customSlide?: Slide => Node,
-  imagesWidth: number
 };
 
 type StateType = {
@@ -71,14 +73,9 @@ class ImageSlider extends Component<PropsType, StateType> {
       <View style={{ position: 'absolute', width: 50, height: '100%' }} />
     );
 
-  _move = (index: number, animated: boolean = true, autoCalled: boolean = true) => {
-    if (!this.autoPlayFlag && autoCalled) {
-      return;
-    }
+  _move = (index: number, animated: boolean = true) => {
     const isUpdating = index !== this._getPosition();
-    const x = (this.props.imagesWidth ?
-	this.props.imagesWidth : Dimensions.get("window").width)
-	* index;
+    const x = Dimensions.get('window').width * index;
 
     this._ref && this._ref.scrollTo({ y: 0, x, animated });
 
@@ -99,14 +96,14 @@ class ImageSlider extends Component<PropsType, StateType> {
 
   _getPosition() {
     if (typeof this.props.position === 'number') {
-      return this.props.position % this.props.images.length;
+      return this.props.position;
     }
-    return this.state.position % this.props.images.length;
+    return this.state.position;
   }
 
   componentDidUpdate(prevProps: Object) {
-    const { position, autoPlayFlag } = this.props;
-    this.autoPlayFlag = autoPlayFlag;
+    const { position } = this.props;
+
     if (position && prevProps.position !== position) {
       this._move(position);
     }
@@ -170,7 +167,7 @@ class ImageSlider extends Component<PropsType, StateType> {
     this._setInterval();
   };
 
-  componentDidMount() {
+  componentWillMount() {
     this._setInterval();
   }
 
@@ -185,7 +182,7 @@ class ImageSlider extends Component<PropsType, StateType> {
 
   _renderImage = (image: any, index: number) => {
     const { width } = Dimensions.get('window');
-    const { onPress, customSlide } = this.props;
+    const { onPress, customSlide, startPrefix = '', endPrefix = '', imageKey='uri' } = this.props;
     const offset = { marginLeft: index === -1 ? -width : 0 };
     const imageStyle = [styles.image, { width }, offset];
 
@@ -193,7 +190,20 @@ class ImageSlider extends Component<PropsType, StateType> {
       return customSlide({ item: image, style: imageStyle, index, width });
     }
 
-    const imageObject = typeof image === 'string' ? { uri: image } : image;
+    let imageObject = image;
+
+    switch (typeof image) {
+      case 'string':
+        imageObject = { uri: startPrefix + image + endPrefix };
+        break;
+
+      case 'object':
+        imageObject = { uri: startPrefix + image[imageKey] + endPrefix };
+        break;
+
+      default:
+        break;
+    }
 
     const imageComponent = (
       <Image key={index} source={imageObject} style={[imageStyle]} />
@@ -220,14 +230,7 @@ class ImageSlider extends Component<PropsType, StateType> {
   // do not scroll.
   _scrollEnabled = (position: number) =>
     position !== -1 && position !== this.props.images.length;
-  moveNext = () => {
-    const next = (this.state.position + 1) % this.props.images.length;
-    this._move(next, true, false);
-  }
-  movePrev = () => {
-    const prev = (this.state.position + this.props.images.length - 1) % this.props.images.length;
-    this._move(prev, true, false);
-  }
+
   render() {
     const {
       onPress,
@@ -263,22 +266,22 @@ class ImageSlider extends Component<PropsType, StateType> {
         {customButtons ? (
           customButtons(position, this._move)
         ) : (
-            <View style={styles.buttons}>
-              {this.props.images.map((image, index) => (
-                <TouchableHighlight
-                  key={index}
-                  underlayColor="#ccc"
-                  onPress={() => this._move(index)}
-                  style={[
-                    styles.button,
-                    position === index && styles.buttonSelected,
-                  ]}
-                >
-                  <View />
-                </TouchableHighlight>
-              ))}
-            </View>
-          )}
+          <View style={styles.buttons}>
+            {this.props.images.map((image, index) => (
+              <TouchableHighlight
+                key={index}
+                underlayColor="#ccc"
+                onPress={() => this._move(index)}
+                style={[
+                  styles.button,
+                  position === index && styles.buttonSelected,
+                ]}
+              >
+                <View />
+              </TouchableHighlight>
+            ))}
+          </View>
+        )}
         {this._popHelperView()}
       </View>
     );
@@ -299,7 +302,8 @@ const styles = StyleSheet.create({
   },
   buttons: {
     height: 15,
-    marginTop: -15,
+    marginTop: -25,
+    marginBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
