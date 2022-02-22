@@ -309,12 +309,12 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 8 / 2,
-    backgroundColor: '#ccc',
+    backgroundColor: '#cccccc',
     opacity: 0.9,
   },
   buttonSelected: {
     opacity: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
   },
 });
 
