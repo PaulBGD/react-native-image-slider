@@ -25,9 +25,8 @@ type Slide = {
 
 type PropsType = {
   images: Array<number | string>,
-  startPrefix:string,
-  endPrefix:string,
-  imageKey:string,
+  startString: string,
+  imageKey: string,
   style?: any,
   loop?: boolean,
   loopBothSides?: boolean,
@@ -188,35 +187,25 @@ class ImageSlider extends Component<PropsType, StateType> {
 
   _renderImage = (image: any, index: number) => {
     const { width } = Dimensions.get('window');
-    const { onPress, customSlide, startPrefix='', endPrefix='', imageKey='uri' } = this.props;
+    const { onPress, customSlide, startString = '', imageKey = '', imageStyle={}, resizeMode='cover' } = this.props;
     const offset = { marginLeft: index === -1 ? -width : 0 };
-    const imageStyle = [styles.image, { width }, offset];
+    const imgStyle = [styles.image, { width }, offset, imageStyle];
 
     if (customSlide) {
-      return customSlide({ item: image, style: imageStyle, index, width });
+      return customSlide({ item: image, style: imgStyle, index, width });
     }
 
-    switch (typeof image) {
-      case 'string':
-        imageObject = { uri: startPrefix + image + endPrefix };
-        break;
+    const imageObject = typeof image === 'string' ? image.includes('file:/') ? { uri: image } : { uri: startString + image } : typeof image === 'object' ? { uri: startString + image[imageKey] } : image;
 
-      case 'object':
-        imageObject = { uri: startPrefix + image[imageKey] + endPrefix };
-        break;
-
-      default:
-        break;
-    }
     const imageComponent = (
-      <Image key={index} source={imageObject} style={[imageStyle]} />
+      <Image key={index} source={imageObject} style={[imgStyle]} resizeMode={resizeMode}/>
     );
 
     if (onPress) {
       return (
         <TouchableOpacity
           key={index}
-          style={[imageStyle, offset]}
+          style={[imgStyle, offset]}
           onPress={() => onPress && onPress({ image, index })}
           delayPressIn={200}
         >
@@ -307,7 +296,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#222',
   },
   image: {
-    width: 200,
     height: '100%',
   },
   buttons: {
